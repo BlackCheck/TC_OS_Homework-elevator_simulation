@@ -47,7 +47,7 @@ elevator::elevator(QWidget *parent, int _no, int _FLOOR_NUM) : QWidget(parent), 
 	connect(ui->pushButton_closedoor, &QPushButton::clicked, this, [=]{
         if(door == 0 || door == 2) QMessageBox::about(nullptr, "Error!", "门已经关上了.");
     });
-	connect(ui->pushButton_alert, &QPushButton::clicked, this, [=]{ctrl->display_alert(no+1);});
+	connect(ui->pushButton_alert, &QPushButton::clicked, this, [=]{send_alert_request(no+1);});
 }
 
 elevator::~elevator(){
@@ -176,4 +176,8 @@ void elevator::timer_elevator_tick(){
 
 void elevator::setController(controller *_ctrl){
     ctrl = _ctrl;
+}
+
+void elevator::send_alert_request(int ele_no){
+    ctrl->receive_alert_request(ele_no);
 }

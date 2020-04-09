@@ -28,6 +28,7 @@ class elevator : public QWidget{
 	public:
 		int no = 0; // This elevator's id.
 		int door = 0; // The status of door ∈ [0: closed, 1: opened, 2: closing, 3:opening].
+		// todo: 增加停用状态 3: S(top) 4: B(roken)
 		int status = 0; //  The status of this elevator ∈ [1: up, 0: pause, 2: down].
 		int currentFloor = 0;
 		int FLOOR_NUM = 20;
@@ -58,9 +59,8 @@ class elevator : public QWidget{
 		// set controller
 		void setController(controller *_ctrl);
 
-//	signals:
-//        void send_ele_no(int);
-
+		// send_alert();
+		void send_alert_request(int no);
 
 };
 

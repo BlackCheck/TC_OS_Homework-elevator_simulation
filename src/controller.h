@@ -47,10 +47,9 @@ class controller : public QWidget{
 		// See "recive_request" in class "elevator".
 		bool send_request(bool up = true, int floor = 1, elevator *ele = nullptr, bool forceRecive = false);
 
-		bool receive_request(int ele_no);
-
 //    public slots:
         void display_alert(int ele_no);
+        void receive_alert_request(int ele_no);
 
 };
 

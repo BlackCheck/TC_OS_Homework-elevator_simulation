@@ -84,9 +84,6 @@ bool controller::send_request(bool up, int floor, elevator *ele, bool forceReciv
     return(ele->recive_request(up, floor, forceRecive));
 }
 
-bool controller::receive_request(int ele_no){
-    display_alert(ele_no);
-}
 
 // 优先级调度算法
 int controller::ele_rate(bool reqUp, int reqFloor, int eleFloor, int eleStatus){
@@ -163,7 +160,12 @@ void controller::timer_building_tick(){
 	}
 }
 
+void controller::receive_alert_request(int ele_no){
+    display_alert(ele_no);
+}
+
 void controller::display_alert(int ele_no){
     QMessageBox::about(nullptr, "Alert!", "电梯：" + QString::number(ele_no) + "已发出警报！");
 }
+
 

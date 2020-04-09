@@ -20,20 +20,20 @@ void MainWindow::run(){
 	int FLOOR_NUM = 56;
 	int ELE_NUM = 6;
 
-    controller *ctl = new controller(nullptr, eles, FLOOR_NUM, 1);
+    controller *ctl = new controller(nullptr, eles, FLOOR_NUM, 1);//controller对象指针
 
 
 	for(int i = 0; i < ELE_NUM; i++){
-		elevator *ele = new elevator(nullptr, i, FLOOR_NUM);
+        elevator *ele = new elevator(nullptr, i, FLOOR_NUM);//elevator对象指针
 
 		// windows
 //		ele->move( 5 + i % (GetSystemMetrics(SM_CXSCREEN) / ele->width()) * (ele->width() + 5),
 //				   5 + ((i + 1) * ele->width() / GetSystemMetrics(SM_CXSCREEN)) * (ele->height() + 35)
 //				 );
 
-        ele->setController(ctl);
+        ele->setController(ctl);//每一个
 		ele->show();
-		eles.push_back(ele);
+        eles.push_back(ele);//将每个电梯对象 推到动态数组（向量）
 	}
 	building *bld = new building(nullptr, eles, FLOOR_NUM, 1);
 	bld->move(100,100);

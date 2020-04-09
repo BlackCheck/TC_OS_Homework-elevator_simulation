@@ -2,12 +2,12 @@
 #include "controller.h"
 #include "ui_elevator.h"
 
-elevator::elevator(QWidget *parent, int _no, int _FLOOR_NUM) : QWidget(parent), ui(new Ui::elevator){//派生类继承基类函数
+elevator::elevator(QWidget *parent, int _no, int _FLOOR_NUM) : QWidget(parent), ui(new Ui::elevator){//派生类继承基类函数  新对象
 	ui->setupUi(this);
-	no = _no;
-	FLOOR_NUM = _FLOOR_NUM;
-	QGroupBox *box = ui->groupBox_destination;
-    ctrl = nullptr;
+    no = _no;//电梯号
+    FLOOR_NUM = _FLOOR_NUM; //层数
+    QGroupBox *box = ui->groupBox_destination;//框子
+    ctrl = nullptr;//避免内存溢出 初始化
 
 	// resize the window and box's size to include all the buttons.
 	if(FLOOR_NUM > 20){
@@ -34,7 +34,7 @@ elevator::elevator(QWidget *parent, int _no, int _FLOOR_NUM) : QWidget(parent), 
     ui->verticalSlider_currentFloor->setMaximum(FLOOR_NUM);//滚条
 
 	// todo: ?
-    // Setup the timer. Run timer_elevator_tick() every ELEVATOR_TIMER_TICK ms.//控制时间
+    // Setup the timer. Run timer_elevator_tick() every ELEVATOR_TIMER_TICK ms.//控制时间？？
 	QTimer *timer = new QTimer(this);
 	connect(timer, &QTimer::timeout, this, &elevator::timer_elevator_tick);
 	timer->start(ELEVATOR_TIMER_TICK);
@@ -54,7 +54,7 @@ elevator::~elevator(){
 	delete ui;
 }
 
-void elevator::open_door(){
+void elevator::open_door(){//。。。
 	door = 3; renew_label();//Opening: 800ms.
 	QElapsedTimer t1;
 	t1.start();

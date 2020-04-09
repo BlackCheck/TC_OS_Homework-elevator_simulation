@@ -5,52 +5,13 @@ controller::controller(QWidget *parent, std::vector<elevator*> _eles, int _FLOOR
 	ui->setupUi(this);
 	eles = _eles;
     FLOOR_NUM = _FLOOR_NUM;
-    ELE_NUM = int(eles.size());
+    ELE_NUM = int(eles.size());//当前电梯数量
 	ELE_SELECT_MODE = _ELE_SELECT_MODE;
 	srand(unsigned (time(nullptr)) );
     this->setWindowTitle("电梯控制视图");
 
-    //draw stop Btns
-   /* for (int i= 0; i < 5; i++) {
-        QPushButton *StopBtn  =  new QPushButton(ui->groupBox_btns);//参数为按钮父节点  一般为this
-        StopBtn->setGeometry(480, 30 + i*60, 120, 40);
-        StopBtn->setText("STOP");
-        StopBtn->show();
-        StopBtns.push_back(StopBtn);
-    }
-
-    //draw elevator number lables
-    for(int i = 0; i < 5; i++){
-        QLabel *ELE_NUM = new QLabel(ui->groupBox_btns);//放数字label
-            ELE_NUM->setGeometry( 10, 10, 30, 30);//增加位置
-            ELE_NUM->setAlignment(Qt::AlignHCenter);//消除空隙
-            ELE_NUM->setText(QString::number(i + 1));//数字标记  将数字转化成字符串！！函数
-            ELE_NUM->show();//显示
-     }
-
-    //draw elevator floor lables
-    for(int i = 0; i < 5; i++){
-        QLabel *ELE_NUM = new QLabel(ui->groupBox_btns);//放数字label
-            ELE_NUM->setGeometry( 10, 10, 30, 30);//增加位置
-            ELE_NUM->setAlignment(Qt::AlignHCenter);//消除空隙
-            ELE_NUM->setText(QString::number(i + 1));//数字标记  将数字转化成字符串！！函数
-            ELE_NUM->show();//显示
-     }
-
-    //draw elevator status lables
-    for(int i = 0; i < 5; i++){
-        QLabel *ELE_NUM = new QLabel(ui->groupBox_btns);//放数字label
-            ELE_NUM->setGeometry( 10, 10, 30, 30);//增加位置
-            ELE_NUM->setAlignment(Qt::AlignHCenter);//消除空隙
-            ELE_NUM->setText(QString::number(i + 1));//数字标记  将数字转化成字符串！！函数
-            ELE_NUM->show();//显示
-     }*/
-
-
 	//set suitable box and window size
     ui->groupBox_btns->setGeometry(20, 20, 621, 421);
-    //ui->groupBox_btns->setGeometry(10, 320, 430, FLOOR_NUM > 20 ? 20 + 120 * ((FLOOR_NUM) / 10 + 1) : 280);
-    //ui->label_bar->setGeometry(10, FLOOR_NUM > 20 ? 340 + 120 * ((FLOOR_NUM) / 10 + 1) : 600, ELE_NUM > 10 ? 20 + 40 * ELE_NUM : 430, 20);
     this->resize(830,460);
 
 	//every 100ms, refresh sliders
@@ -64,10 +25,6 @@ controller::~controller(){
 	delete ui;
 }
 
-void controller::renew_label(unsigned int i){
-	eleSliders[i]->setValue(eles[i]->currentFloor + 1);
-	eleCurrents[i]->setText(QString::number(eles[i]->currentFloor + 1));
-}
 
 bool controller::send_request(bool up, int floor, elevator *ele, bool forceRecive){
     return(ele->recive_request(up, floor, forceRecive));
@@ -140,7 +97,7 @@ void controller::ele_select_send(bool up, int floor){
 
 void controller::timer_building_tick(){
 	for(unsigned int i = 0; i < unsigned(ELE_NUM); i++){
-		renew_label(i);
+        renew_label();
 		if(eles[i]->status == 0){
 			if(ELE_SELECT_MODE == 3){
                 //ui->label_bar->setText(QString::number(i + 1, 10) +"号电梯到达, 取消其他电梯请求.");
@@ -155,4 +112,27 @@ void controller::timer_building_tick(){
 void controller::display_alert(int ele_no){
     QMessageBox::about(nullptr, "Alert!", "电梯：" + QString::number(ele_no) + "已发出警报！");
 }
+
+
+void controller::renew_label(){
+        ui->label_26->setText(eles[0]->statusStr[eles[0]->status]);
+        ui->label_19->setText(QString::number(eles[0]->currentFloor));
+
+        ui->label_27->setText(eles[1]->statusStr[eles[1]->status]);
+        ui->label_20->setText(QString::number(eles[1]->currentFloor));
+
+        ui->label_25->setText(eles[2]->statusStr[eles[2]->status]);
+        ui->label_18->setText(QString::number(eles[2]->currentFloor));
+
+        ui->label_24->setText(eles[3]->statusStr[eles[3]->status]);
+        ui->label_17->setText(QString::number(eles[3]->currentFloor));
+
+        ui->label_28->setText(eles[4]->statusStr[eles[4]->status]);
+        ui->label_21->setText(QString::number(eles[4]->currentFloor));
+
+        ui->label_22->setText(eles[5]->statusStr[eles[5]->status]);
+        ui->label_15->setText(QString::number(eles[5]->currentFloor));
+
+}
+
 

@@ -21,7 +21,7 @@ class controller;
 class elevator : public QWidget{
 	Q_OBJECT
 	public:
-		explicit elevator(QWidget *parent = nullptr, int _no = 0, int _FLOOR_NUM = 20);
+        explicit elevator(QWidget *parent = nullptr, int _no = 0, int _FLOOR_NUM = 20);//构造函数
 		~elevator();
 	private:
 		Ui::elevator *ui;
@@ -29,12 +29,12 @@ class elevator : public QWidget{
 		int no = 0; // This elevator's id.
         int door = 0; // The status of door ∈ [0: closed, 1: opened, 2: closing, 3:opening].
         int status = 0; //  The status of this elevator ∈ [1: up, 0: pause暂停, 2: down,3: stop停用,4: broken].
-        int currentFloor = 0;
-		int FLOOR_NUM = 20;
+        int currentFloor = 0;//floor
+        int FLOOR_NUM = 20;//无用
 
 		const int ELEVATOR_TIMER_TICK = 800; // Frequency, unit: ms;
 
-        QString statusStr[5] = {"P", "↑", "↓","S","B"};
+        QString statusStr[5] = {"P", "↑", "↓","Stop","Ban"};
 		QString doorStr[4]   = {"Closed", "Opened", "Closing", "Opening"};
 
 		std::vector<int> dests; // This elevator's destations <- destsInsider + destsOutside.

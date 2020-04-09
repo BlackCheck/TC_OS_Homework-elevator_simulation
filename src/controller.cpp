@@ -8,7 +8,7 @@ controller::controller(QWidget *parent, std::vector<elevator*> _eles, int _FLOOR
 	ELE_NUM = int(eles.size());
 	ELE_SELECT_MODE = _ELE_SELECT_MODE;
 	srand(unsigned (time(nullptr)) );
-	this->setWindowTitle("电梯外部视图");
+	this->setWindowTitle("保安室控制台");
 
 	//draw elevators
 	// for(int i = 0; i < ELE_NUM; i++){
@@ -33,19 +33,12 @@ controller::controller(QWidget *parent, std::vector<elevator*> _eles, int _FLOOR
 	// 		eleCurrents.push_back(eleCurrent);
 	// }
 
-	// QPushButton *eleNo_stopbtn1 = new QPushButton(ui->controller);
-	// 		eleNo_stopbtn1->setGeometry(20,20,80,40);
- //            eleNo_stopbtn1->setText("1");
-	// 		eleNo_stopbtn1->show();
-			// eleNo_stopbtns.push_back(eleNo_stopbtn);
-			// connect(floorBtnsUp[unsigned(i)], &QPushButton::clicked, this, [=]{floorBtnsUp[unsigned(i)]->setEnabled(false);});
-			// connect(floorBtnsUp[unsigned(i)], &QPushButton::clicked, this, [=]{ele_select_send(true, i);});
-	
+
 	//draw stop btns
-	for(int i = 0; i < ELE_NUM; i++){
+    for(int i = 0; i < ELE_NUM; i++){
 		QPushButton *eleNo_stopbtn = new QPushButton(ui->groupBox_stop_btns);
 			eleNo_stopbtn->setGeometry(20, 15 + 40 * i, 31, 31);
-            eleNo_stopbtn->setText("1");
+            eleNo_stopbtn->setText("STOP");
 			eleNo_stopbtn->show();
 			eleNo_stopbtns.push_back(eleNo_stopbtn);
 			// connect(floorBtnsUp[unsigned(i)], &QPushButton::clicked, this, [=]{floorBtnsUp[unsigned(i)]->setEnabled(false);});
@@ -168,7 +161,7 @@ void controller::ele_select_send(bool up, int floor){
 
 void controller::timer_building_tick(){
 	for(unsigned int i = 0; i < unsigned(ELE_NUM); i++){
-		renew_label(i);
+//		renew_label(i);
 		if(eles[i]->status == 0){
 			if(ELE_SELECT_MODE == 3){
 				ui->label_bar->setText(QString::number(i + 1, 10) +"号电梯到达, 取消其他电梯请求.");

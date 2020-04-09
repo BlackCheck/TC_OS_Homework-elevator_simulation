@@ -1,0 +1,5 @@
+cmake-build*
+build-elevator_sim-Desktop_*
+.idea
+CMakeFiles
+elevator_sim.pro.user*

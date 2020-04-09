@@ -11,26 +11,45 @@ controller::controller(QWidget *parent, std::vector<elevator*> _eles, int _FLOOR
 	this->setWindowTitle("电梯外部视图");
 
 	//draw elevators
+	// for(int i = 0; i < ELE_NUM; i++){
+	// 	QLabel *eleNo = new QLabel(ui->groupBox_eles);
+	// 		eleNo->setGeometry(20 + 40 * i, 30, 20, 20);
+	// 		eleNo->setAlignment(Qt::AlignHCenter);
+	// 		eleNo->setText(QString::number(i + 1, 10));
+	// 		eleNo->show();
+	// 	QSlider *eleSlider = new QSlider(ui->groupBox_eles);
+	// 		eleSlider->setGeometry(20 + 40 * i, 50, 20, 220);
+	// 		eleSlider->setMinimum(1);
+	// 		eleSlider->setMaximum(FLOOR_NUM);
+	// 		eleSlider->setSingleStep(1);
+	// 		eleSlider->setPageStep(1);
+	// 		eleSlider->show();
+	// 		eleSliders.push_back(eleSlider);
+	// 	QLabel *eleCurrent = new QLabel(ui->groupBox_eles);
+	// 		eleCurrent->setGeometry(20 + 40 * i, 270, 20, 20);
+	// 		eleCurrent->setAlignment(Qt::AlignHCenter);
+	// 		eleCurrent->setText("1");
+	// 		eleCurrent->show();
+	// 		eleCurrents.push_back(eleCurrent);
+	// }
+
+	// QPushButton *eleNo_stopbtn1 = new QPushButton(ui->controller);
+	// 		eleNo_stopbtn1->setGeometry(20,20,80,40);
+ //            eleNo_stopbtn1->setText("1");
+	// 		eleNo_stopbtn1->show();
+			// eleNo_stopbtns.push_back(eleNo_stopbtn);
+			// connect(floorBtnsUp[unsigned(i)], &QPushButton::clicked, this, [=]{floorBtnsUp[unsigned(i)]->setEnabled(false);});
+			// connect(floorBtnsUp[unsigned(i)], &QPushButton::clicked, this, [=]{ele_select_send(true, i);});
+	
+	//draw stop btns
 	for(int i = 0; i < ELE_NUM; i++){
-		QLabel *eleNo = new QLabel(ui->groupBox_eles);
-			eleNo->setGeometry(20 + 40 * i, 30, 20, 20);
-			eleNo->setAlignment(Qt::AlignHCenter);
-			eleNo->setText(QString::number(i + 1, 10));
-			eleNo->show();
-		QSlider *eleSlider = new QSlider(ui->groupBox_eles);
-			eleSlider->setGeometry(20 + 40 * i, 50, 20, 220);
-			eleSlider->setMinimum(1);
-			eleSlider->setMaximum(FLOOR_NUM);
-			eleSlider->setSingleStep(1);
-			eleSlider->setPageStep(1);
-			eleSlider->show();
-			eleSliders.push_back(eleSlider);
-		QLabel *eleCurrent = new QLabel(ui->groupBox_eles);
-			eleCurrent->setGeometry(20 + 40 * i, 270, 20, 20);
-			eleCurrent->setAlignment(Qt::AlignHCenter);
-			eleCurrent->setText("1");
-			eleCurrent->show();
-			eleCurrents.push_back(eleCurrent);
+		QPushButton *eleNo_stopbtn = new QPushButton(ui->groupBox_stop_btns);
+			eleNo_stopbtn->setGeometry(20, 15 + 40 * i, 31, 31);
+            eleNo_stopbtn->setText("1");
+			eleNo_stopbtn->show();
+			eleNo_stopbtns.push_back(eleNo_stopbtn);
+			// connect(floorBtnsUp[unsigned(i)], &QPushButton::clicked, this, [=]{floorBtnsUp[unsigned(i)]->setEnabled(false);});
+			// connect(floorBtnsUp[unsigned(i)], &QPushButton::clicked, this, [=]{ele_select_send(true, i);});
 	}
 
 	//draw btns
@@ -59,7 +78,8 @@ controller::controller(QWidget *parent, std::vector<elevator*> _eles, int _FLOOR
 	floorBtnsUp[unsigned(FLOOR_NUM) - 1]->hide();
 
 	//set suitable box and window size
-	ui->groupBox_eles->setGeometry(10, 10, ELE_NUM > 10 ? 20 + 40 * ELE_NUM : 430, 300);
+    //ui->groupBox_eles->setGeometry(10, 10, ELE_NUM > 10 ? 20 + 40 * ELE_NUM : 430, 300);
+    ui->groupBox_stop_btns->setGeometry(10,10,430, 50 * 6);
 	ui->groupBox_btns->setGeometry(10, 320, 430, FLOOR_NUM > 20 ? 20 + 120 * ((FLOOR_NUM) / 10 + 1) : 280);
 	ui->label_bar->setGeometry(10, FLOOR_NUM > 20 ? 340 + 120 * ((FLOOR_NUM) / 10 + 1) : 600, ELE_NUM > 10 ? 20 + 40 * ELE_NUM : 430, 20);
 	this->resize(ELE_NUM > 10 ? 40 + 40 * ELE_NUM : 450, FLOOR_NUM > 20 ? 360 + 120 * ((FLOOR_NUM) / 10 + 1) : 620);

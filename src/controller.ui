@@ -25,19 +25,6 @@
   <property name="windowTitle">
    <string>Building</string>
   </property>
-  <widget class="QGroupBox" name="groupBox_eles">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>430</width>
-     <height>300</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string>Elevators</string>
-   </property>
-  </widget>
   <widget class="QGroupBox" name="groupBox_btns">
    <property name="geometry">
     <rect>
@@ -68,6 +55,19 @@
    </property>
    <property name="text">
     <string>就绪</string>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_stop_btns">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>10</y>
+     <width>121</width>
+     <height>301</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Stop</string>
    </property>
   </widget>
  </widget>

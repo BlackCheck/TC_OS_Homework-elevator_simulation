@@ -33,6 +33,7 @@ class controller : public QWidget{
 		std::vector<QLabel*>   eleCurrents;
 		std::vector<QPushButton*> floorBtnsUp;
 		std::vector<QPushButton*> floorBtnsDown;
+		std::vector<QPushButton*> eleNo_stopbtns;
 		// Store every elevator's rating, for elevator selecting.
 		// Only be used in the ELE_SELECT_MODE_1.
 		std::vector<std::pair<int, int>> eleRatings;

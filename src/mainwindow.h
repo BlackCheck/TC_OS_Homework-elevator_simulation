@@ -1,8 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "windows.h"
+//#include "windows.h"
 #include "building.h"
+#include "controller.h"
 #include <QCloseEvent>
 #include <QMainWindow>
 
@@ -22,6 +23,9 @@ class MainWindow : public QMainWindow{
 	public:
 		std::vector<elevator*> eles; // Used to store elevators, it should be empty before every simulation.
 		building *a_building = nullptr; //Used to store a build class. See "building.h".
+
+		// define controller
+        controller *a_controller = nullptr;
 	public:
 		void run(); // To start simiulations.
 		void my_stop(); // To stop simiulations.

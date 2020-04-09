@@ -1,7 +1,7 @@
-#include "building.h"
-#include "ui_building.h"
+#include "controller.h"
+#include "ui_controller.h"
 
-building::building(QWidget *parent, std::vector<elevator*> _eles, int _FLOOR_NUM, int _ELE_SELECT_MODE) : QWidget(parent), ui(new Ui::building){
+controller::controller(QWidget *parent, std::vector<elevator*> _eles, int _FLOOR_NUM, int _ELE_SELECT_MODE) : QWidget(parent), ui(new Ui::controller){
 	ui->setupUi(this);
 	eles = _eles;
 	FLOOR_NUM = _FLOOR_NUM;
@@ -66,27 +66,30 @@ building::building(QWidget *parent, std::vector<elevator*> _eles, int _FLOOR_NUM
 
 	//every 100ms, refresh sliders
 	QTimer *timer = new QTimer(this);
-	connect(timer, &QTimer::timeout, this, &building::timer_building_tick);
+	connect(timer, &QTimer::timeout, this, &controller::timer_building_tick);
 	timer->start(100);
 }
 
 
-building::~building(){
+controller::~controller(){
 	delete ui;
 }
 
-void building::renew_label(unsigned int i){
+void controller::renew_label(unsigned int i){
 	eleSliders[i]->setValue(eles[i]->currentFloor + 1);
 	eleCurrents[i]->setText(QString::number(eles[i]->currentFloor + 1));
 }
 
-bool building::send_request(bool up, int floor, elevator *ele, bool forceRecive){
-	return(ele->recive_request(up, floor, forceRecive));
+bool controller::send_request(bool up, int floor, elevator *ele, bool forceRecive){
+    return(ele->recive_request(up, floor, forceRecive));
 }
 
+bool controller::receive_request(int ele_no){
+    display_alert(ele_no);
+}
 
 // 优先级调度算法
-int building::ele_rate(bool reqUp, int reqFloor, int eleFloor, int eleStatus){
+int controller::ele_rate(bool reqUp, int reqFloor, int eleFloor, int eleStatus){
 	if(reqFloor == eleFloor) return 10000;
 	double distanceRating = double(abs(eleFloor - reqFloor)) / double(FLOOR_NUM);
 	if(eleStatus == 0) distanceRating *= 3;
@@ -98,7 +101,7 @@ int building::ele_rate(bool reqUp, int reqFloor, int eleFloor, int eleStatus){
 }
 
 // 控制端发送调用电梯的请求 true = up false = down
-void building::ele_select_send(bool up, int floor){
+void controller::ele_select_send(bool up, int floor){
 	ui->label_bar->setText("开始处理来自"+ QString::number(floor + 1, 10) +"层的电梯调度请求...");
 	if(ELE_SELECT_MODE == 1){
 		eleRatings.clear();
@@ -146,7 +149,7 @@ void building::ele_select_send(bool up, int floor){
 	}
 }
 
-void building::timer_building_tick(){
+void controller::timer_building_tick(){
 	for(unsigned int i = 0; i < unsigned(ELE_NUM); i++){
 		renew_label(i);
 		if(eles[i]->status == 0){
@@ -158,5 +161,9 @@ void building::timer_building_tick(){
 			floorBtnsDown[unsigned(eles[i]->currentFloor)]->setEnabled(true);
 		}
 	}
+}
+
+void controller::display_alert(int ele_no){
+    QMessageBox::about(nullptr, "Alert!", "电梯：" + QString::number(ele_no) + "已发出警报！");
 }
 

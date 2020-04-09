@@ -28,17 +28,20 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     elevator.cpp \
-    building.cpp
+    building.cpp \
+    controller.cpp
 
 HEADERS += \
         mainwindow.h \
     elevator.h \
-    building.h
+    building.h \
+    controller.h
 
 FORMS += \
         mainwindow.ui \
     elevator.ui \
-    building.ui
+    building.ui \
+    controller.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

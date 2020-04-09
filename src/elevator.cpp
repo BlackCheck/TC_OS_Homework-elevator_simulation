@@ -1,4 +1,5 @@
 #include "elevator.h"
+#include "controller.h"
 #include "ui_elevator.h"
 
 elevator::elevator(QWidget *parent, int _no, int _FLOOR_NUM) : QWidget(parent), ui(new Ui::elevator){
@@ -6,6 +7,7 @@ elevator::elevator(QWidget *parent, int _no, int _FLOOR_NUM) : QWidget(parent), 
 	no = _no;
 	FLOOR_NUM = _FLOOR_NUM;
 	QGroupBox *box = ui->groupBox_destination;
+    ctrl = nullptr;
 
 	// resize the window and box's size to include all the buttons.
 	if(FLOOR_NUM > 20){
@@ -27,10 +29,11 @@ elevator::elevator(QWidget *parent, int _no, int _FLOOR_NUM) : QWidget(parent), 
 	}
 
 	// Set title , label, slider on the window.
-	this->setWindowTitle("电梯: " + QString::number(no+1, 10));
+	this->setWindowTitle("电梯内部: " + QString::number(no+1, 10));
 	ui->label_NUM_FLOOR->setText(QString::number(FLOOR_NUM, 10));
 	ui->verticalSlider_currentFloor->setMaximum(FLOOR_NUM);
 
+	// todo: ?
 	// Setup the timer. Run timer_elevator_tick() every ELEVATOR_TIMER_TICK ms.
 	QTimer *timer = new QTimer(this);
 	connect(timer, &QTimer::timeout, this, &elevator::timer_elevator_tick);
@@ -42,9 +45,9 @@ elevator::elevator(QWidget *parent, int _no, int _FLOOR_NUM) : QWidget(parent), 
 		else QMessageBox::about(nullptr, "Error!", "运行中无法开门.");
 	});
 	connect(ui->pushButton_closedoor, &QPushButton::clicked, this, [=]{
-		if(door == 0 || door == 2) QMessageBox::about(nullptr, "Error!", "门已经关上了.");
-	});
-	connect(ui->pushButton_alert, &QPushButton::clicked, this, [=]{ QMessageBox::about(nullptr, "Alert!", "已发出警报.");});
+        if(door == 0 || door == 2) QMessageBox::about(nullptr, "Error!", "门已经关上了.");
+    });
+	connect(ui->pushButton_alert, &QPushButton::clicked, this, [=]{ctrl->display_alert(no+1);});
 }
 
 elevator::~elevator(){
@@ -79,9 +82,8 @@ void elevator::renew_label(){
 }
 
 bool elevator::recive_request(bool up, int floor, bool forceRecive){
-	if(!forceRecive && (    ( up && status == 2 && currentFloor > floor )
-						 || ( !up && status == 1 && currentFloor < floor )
-						)) return false;
+	if(!forceRecive && ( (up && status == 2 && currentFloor > floor)|| ( !up && status == 1 && currentFloor < floor ))) return false;
+
 	bool hasIn = false;
 	for(auto i : destsOutside) if(i == floor) hasIn = true;
 	if(!hasIn) destsOutside.push_back(floor);
@@ -170,4 +172,8 @@ void elevator::timer_elevator_tick(){
 	currentFloor += status == 1 ? 1 : status == 2 ? -1 : 0;
 	status == 0 ? check_when_pause() : check_when_run();
 	renew_label();
+}
+
+void elevator::setController(controller *_ctrl){
+    ctrl = _ctrl;
 }

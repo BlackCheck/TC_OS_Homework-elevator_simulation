@@ -1,6 +1,7 @@
 #ifndef ELEVATOR_H
 #define ELEVATOR_H
 
+//#include "controller.h"
 #include <vector>
 #include <algorithm>
 #include <QTimer>
@@ -13,6 +14,9 @@
 // This class is the panel inside the elevators
 
 namespace Ui { class elevator; }
+
+//extern
+class controller;
 
 class elevator : public QWidget{
 	Q_OBJECT
@@ -27,13 +31,19 @@ class elevator : public QWidget{
 		int status = 0; //  The status of this elevator ∈ [1: up, 0: pause, 2: down].
 		int currentFloor = 0;
 		int FLOOR_NUM = 20;
+
 		const int ELEVATOR_TIMER_TICK = 800; // Frequency, unit: ms;
+
 		QString statusStr[3] = {"P", "↑", "↓"};
 		QString doorStr[4]   = {"Closed", "Opened", "Closing", "Opening"};
+
 		std::vector<int> dests; // This elevator's destations <- destsInsider + destsOutside.
 		std::vector<int> destsInsider; // This elevator's destations from inside.
 		std::vector<int> destsOutside; // This elevator's destations from outside. Add by "recive_request()".
+
 		std::vector<QPushButton*> Qbtns; // To store buttons on the window.
+
+		controller *ctrl;
 	public:
 		void open_door();
 		void renew_label();
@@ -44,6 +54,14 @@ class elevator : public QWidget{
 		// Recive task request form outside(building), and add it to destO. .
 		// See "send_request()" in class "building".
 		bool recive_request(bool up = true, int floor = 1, bool forceRecive = false);
+
+		// set controller
+		void setController(controller *_ctrl);
+
+//	signals:
+//        void send_ele_no(int);
+
+
 };
 
 #endif // ELEVATOR_H

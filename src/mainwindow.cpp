@@ -20,7 +20,7 @@ void MainWindow::run(){
 	int FLOOR_NUM = 56;
 	int ELE_NUM = 6;
 
-    controller *ctl = new controller(nullptr, eles, FLOOR_NUM, 1);
+
 
 
 	for(int i = 0; i < ELE_NUM; i++){
@@ -31,7 +31,6 @@ void MainWindow::run(){
 //				   5 + ((i + 1) * ele->width() / GetSystemMetrics(SM_CXSCREEN)) * (ele->height() + 35)
 //				 );
 
-        ele->setController(ctl);
 		ele->show();
 		eles.push_back(ele);
 	}
@@ -39,7 +38,10 @@ void MainWindow::run(){
 	bld->move(100,100);
 	bld->show();
 	a_building = bld;
-
+    controller *ctl = new controller(nullptr, eles, FLOOR_NUM, 1);
+    for(int i = 0;i < ELE_NUM; i++){
+        eles[i]->setController(ctl);
+    }
 
     ctl->move(100,100);
     ctl->show();

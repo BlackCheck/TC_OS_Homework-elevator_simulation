@@ -52,7 +52,8 @@ controller::controller(QWidget *parent, std::vector<elevator*> _eles, int _FLOOR
     //ui->groupBox_btns->setGeometry(10, 320, 430, FLOOR_NUM > 20 ? 20 + 120 * ((FLOOR_NUM) / 10 + 1) : 280);
     //ui->label_bar->setGeometry(10, FLOOR_NUM > 20 ? 340 + 120 * ((FLOOR_NUM) / 10 + 1) : 600, ELE_NUM > 10 ? 20 + 40 * ELE_NUM : 430, 20);
     this->resize(830,460);
-
+    connect(ui->ele_stop_1, &QPushButton::clicked, this, [=]{send_stop_request(eles[0]);});
+    connect(ui->ele_reset_1, &QPushButton::clicked, this, [=]{reset_ele(0);});
 	//every 100ms, refresh sliders
 	QTimer *timer = new QTimer(this);
 	connect(timer, &QTimer::timeout, this, &controller::timer_building_tick);
@@ -141,7 +142,7 @@ void controller::ele_select_send(bool up, int floor){
 void controller::timer_building_tick(){
 	for(unsigned int i = 0; i < unsigned(ELE_NUM); i++){
 		renew_label(i);
-		if(eles[i]->status == 0){
+		if(eles[i]->status == 0 || eles[i]->status == 3){
 			if(ELE_SELECT_MODE == 3){
                 //ui->label_bar->setText(QString::number(i + 1, 10) +"号电梯到达, 取消其他电梯请求.");
 				for(auto j : eles) j->cancel_request(eles[i]->currentFloor);
@@ -156,3 +157,27 @@ void controller::display_alert(int ele_no){
     QMessageBox::about(nullptr, "Alert!", "电梯：" + QString::number(ele_no) + "已发出警报！");
 }
 
+void controller::send_stop_request(elevator * ele){
+    return(recive_stop_request(ele));
+}
+
+void controller::recive_stop_request(elevator * ele){
+    if (ele->door) {
+        ui->ele_stop_1->setEnabled(false);
+		ele->status = 3;
+        while(~ele->status) ele->recive_request(2, 1, true);
+	}
+	else {
+        if (ele->status == 1){
+            ele->recive_request(true, ele->currentFloor + 1, true);
+		}
+		else {
+            ele->recive_request(false, ele->currentFloor - 1, true);
+		}
+        while(reset_ele(ele->no)) ele->recive_request(2, 1, true);
+	}
+}
+
+void controller::reset_ele(int ele){
+	eles[ele]->status = 0;
+}

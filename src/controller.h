@@ -49,6 +49,11 @@ class controller : public QWidget{
 		bool send_request(bool up = true, int floor = 1, elevator *ele = nullptr, bool forceRecive = false);
 
 		bool receive_request(int ele_no);
+		
+		void send_stop_request(elevator * ele);
+		void recive_stop_request(elevator * ele);
+		void reset_ele(int ele);
+
 
 //    public slots:
         void display_alert(int ele_no);

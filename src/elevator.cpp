@@ -48,6 +48,8 @@ elevator::elevator(QWidget *parent, int _no, int _FLOOR_NUM) : QWidget(parent), 
         if(door == 0 || door == 2) QMessageBox::about(nullptr, "Error!", "门已经关上了.");//QMessageBox::about(0,"标题文本","内容文本")
     });
     connect(ui->pushButton_alert, &QPushButton::clicked, this, [=]{ctrl->display_alert(no+1);});//connect 最后可以用一个匿名函数代替
+
+    trueCurrentFloor = currentFloor+1;
 }
 
 elevator::~elevator(){

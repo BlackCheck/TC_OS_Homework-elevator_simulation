@@ -30,12 +30,12 @@ class elevator : public QWidget{
         int door = 0; // The status of door ∈ [0: closed, 1: opened, 2: closing, 3:opening].
         int status = 0; //  The status of this elevator ∈ [1: up, 0: pause暂停, 2: down,3: stop停用,4: broken].
         int currentFloor = 0;//floor
-        int trueCurrentFloor = 1; // true floor number
+        int trueCurrentFloor = 0; // true floor number
         int FLOOR_NUM = 20;//无用
 
 		const int ELEVATOR_TIMER_TICK = 800; // Frequency, unit: ms;
 
-        QString statusStr[5] = {"P", "↑", "↓","Stop","Ban"};
+        QString statusStr[5] = {"P", "↑", "↓","Stop","Broken"};
 		QString doorStr[4]   = {"Closed", "Opened", "Closing", "Opening"};
 
 		std::vector<int> dests; // This elevator's destations <- destsInsider + destsOutside.

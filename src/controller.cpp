@@ -141,22 +141,22 @@ void controller::reset_ele(int ele){
 
 void controller::renew_label(){
         ui->label_26->setText(eles[0]->statusStr[eles[0]->status]);
-        ui->label_19->setText(QString::number(eles[0]->currentFloor));
+        ui->label_19->setText(QString::number(eles[0]->trueCurrentFloor));
 
         ui->label_27->setText(eles[1]->statusStr[eles[1]->status]);
-        ui->label_20->setText(QString::number(eles[1]->currentFloor));
+        ui->label_20->setText(QString::number(eles[1]->trueCurrentFloor));
 
         ui->label_25->setText(eles[2]->statusStr[eles[2]->status]);
-        ui->label_18->setText(QString::number(eles[2]->currentFloor));
+        ui->label_18->setText(QString::number(eles[2]->trueCurrentFloor));
 
         ui->label_24->setText(eles[3]->statusStr[eles[3]->status]);
-        ui->label_17->setText(QString::number(eles[3]->currentFloor));
+        ui->label_17->setText(QString::number(eles[3]->trueCurrentFloor));
 
         ui->label_28->setText(eles[4]->statusStr[eles[4]->status]);
-        ui->label_21->setText(QString::number(eles[4]->currentFloor));
+        ui->label_21->setText(QString::number(eles[4]->trueCurrentFloor));
 
         ui->label_22->setText(eles[5]->statusStr[eles[5]->status]);
-        ui->label_15->setText(QString::number(eles[5]->currentFloor));
+        ui->label_15->setText(QString::number(eles[5]->trueCurrentFloor));
 
 }
 

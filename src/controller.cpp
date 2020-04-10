@@ -103,8 +103,8 @@ void controller::timer_building_tick(){
                 //ui->label_bar->setText(QString::number(i + 1, 10) +"号电梯到达, 取消其他电梯请求.");
 				for(auto j : eles) j->cancel_request(eles[i]->currentFloor);
 			}
-			floorBtnsUp[unsigned(eles[i]->currentFloor)]->setEnabled(true);
-			floorBtnsDown[unsigned(eles[i]->currentFloor)]->setEnabled(true);
+//			floorBtnsUp[unsigned(eles[i]->currentFloor)]->setEnabled(true);
+//			floorBtnsDown[unsigned(eles[i]->currentFloor)]->setEnabled(true);
 		}
 	}
 }

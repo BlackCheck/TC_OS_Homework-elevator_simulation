@@ -20,7 +20,7 @@ void MainWindow::run(){
 	int FLOOR_NUM = 56;
 	int ELE_NUM = 6;
 
-    controller *ctl = new controller(nullptr, eles, FLOOR_NUM, 1);//controller对象指针
+
 
 
 	for(int i = 0; i < ELE_NUM; i++){
@@ -30,8 +30,6 @@ void MainWindow::run(){
 //		ele->move( 5 + i % (GetSystemMetrics(SM_CXSCREEN) / ele->width()) * (ele->width() + 5),
 //				   5 + ((i + 1) * ele->width() / GetSystemMetrics(SM_CXSCREEN)) * (ele->height() + 35)
 //				 );
-
-        ele->setController(ctl);//每一个
 		ele->show();
         eles.push_back(ele);//将每个电梯对象 推到动态数组（向量）
 	}
@@ -40,7 +38,10 @@ void MainWindow::run(){
 	bld->show();
 	a_building = bld;
 
-
+    controller *ctl = new controller(nullptr, eles, FLOOR_NUM, 1);//controller对象指针
+    for (int i = 0; i < ELE_NUM; ++i) {
+        eles[i]->setController(ctl);//每一个
+    }
     ctl->move(100,100);
     ctl->show();
     a_controller = ctl;

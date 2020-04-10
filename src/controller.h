@@ -39,7 +39,7 @@ class controller : public QWidget{
 		std::vector<std::pair<int, int>> eleRatings;
 	public:
 		void timer_building_tick(); // Run every 0.1s.
-		void renew_label(unsigned int i);
+        void renew_label();
 		// Main func to select elevator(s) and send task request(s) after button clicked.
 		void ele_select_send(bool up = true, int floor = 1);
 		// Caculate every elevator's rating, for elevator selecting.

@@ -47,7 +47,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>PushButton</string>
+     <string>STOP</string>
     </property>
    </widget>
    <widget class="QPushButton" name="ele_stop_4">
@@ -60,7 +60,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>PushButton</string>
+     <string>STOP</string>
     </property>
    </widget>
    <widget class="QPushButton" name="ele_stop_5">
@@ -73,7 +73,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>PushButton</string>
+     <string>STOP</string>
     </property>
    </widget>
    <widget class="QPushButton" name="ele_stop_1">
@@ -99,7 +99,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>PushButton</string>
+     <string>STOP</string>
     </property>
    </widget>
    <widget class="QLabel" name="label">
@@ -385,7 +385,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>PushButton</string>
+     <string>STOP</string>
     </property>
    </widget>
    <widget class="QPushButton" name="ele_reset_1">
@@ -471,13 +471,26 @@
    <property name="geometry">
     <rect>
      <x>640</x>
-     <y>180</y>
+     <y>140</y>
      <width>180</width>
      <height>80</height>
     </rect>
    </property>
    <property name="text">
     <string>Emergency Button</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_8">
+   <property name="geometry">
+    <rect>
+     <x>640</x>
+     <y>260</y>
+     <width>180</width>
+     <height>80</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Reset</string>
    </property>
   </widget>
  </widget>

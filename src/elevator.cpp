@@ -178,10 +178,11 @@ void elevator::check_when_run(){
 void elevator::timer_elevator_tick(){
 	currentFloor += status == 1 ? 1 : status == 2 ? -1 : 0;
     trueCurrentFloor = currentFloor+1;
-    /*if(status == 3||status == 4){
-       while(reset());
-    }*/
-	status == 0 ? check_when_pause() : check_when_run();
+
+    if(status==0) check_when_pause();
+    else if(status == 3||status == 4) return ;
+    else check_when_run();
+
 	renew_label();
 }
 

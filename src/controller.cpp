@@ -24,6 +24,7 @@ controller::controller(QWidget *parent, std::vector<elevator*> _eles, int _FLOOR
     connect(ui->ele_stop_4,&QPushButton::clicked,this,[=]{stop_ele(3);});
     connect(ui->ele_stop_5,&QPushButton::clicked,this,[=]{stop_ele(4);});
     connect(ui->ele_stop_6,&QPushButton::clicked,this,[=]{stop_ele(5);});
+    connect(ui->pushButton_7,&QPushButton::clicked,this,[=]{Emergency();});
 
 }
 
@@ -75,8 +76,13 @@ void controller::renew_label(){
 }
 
 void controller::stop_ele(int ele){
-
     eles[ele]->status = 3;
+    eles[ele]->door = 1;//eles是一个向量组  eles[i]才是一个对象指针
+}
 
+void controller::Emergency(){
+    for(int i = 0;i<6;i++){
+        stop_ele(i);
+    }
 }
 

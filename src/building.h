@@ -35,7 +35,7 @@ class building : public QWidget{
 		std::vector<QPushButton*> floorBtnsDown;
 		// Store every elevator's rating, for elevator selecting.
 		// Only be used in the ELE_SELECT_MODE_1.
-		std::vector<std::pair<int, int>> eleRatings;
+        std::vector<std::pair<int, int>> eleRatings;//分别保存电梯的楼层数  与权重
 	public:
 		void timer_building_tick(); // Run every 0.1s.
 		void renew_label(unsigned int i);
@@ -46,6 +46,7 @@ class building : public QWidget{
 		int  ele_rate(bool reqUp, int reqFloor, int eleFloor, int eleStatus);
 		// See "recive_request" in class "elevator".
 		bool send_request(bool up = true, int floor = 1, elevator *ele = nullptr, bool forceRecive = false);
+        void judge_stop(int ele,elevator *ele_num);
 };
 
 #endif // BUILDING_H

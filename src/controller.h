@@ -31,8 +31,6 @@ class controller : public QWidget{
 		std::vector<elevator*> eles;
 		std::vector<QSlider*>  eleSliders;
 		std::vector<QLabel*>   eleCurrents;
-		std::vector<QPushButton*> floorBtnsUp;
-		std::vector<QPushButton*> floorBtnsDown;
         std::vector<QPushButton*> StopBtns;
 		// Store every elevator's rating, for elevator selecting.
 		// Only be used in the ELE_SELECT_MODE_1.
@@ -54,6 +52,7 @@ class controller : public QWidget{
 		void recive_stop_request(elevator * ele);
 		void reset_ele(int ele);
 
+        void stop_ele(int ele);
 
 //    public slots:
         void display_alert(int ele_no);

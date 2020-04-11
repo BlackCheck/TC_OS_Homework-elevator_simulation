@@ -30,10 +30,10 @@ void MainWindow::run(){
 //		ele->move( 5 + i % (GetSystemMetrics(SM_CXSCREEN) / ele->width()) * (ele->width() + 5),
 //				   5 + ((i + 1) * ele->width() / GetSystemMetrics(SM_CXSCREEN)) * (ele->height() + 35)
 //				 );
-<<<<<<< HEAD
+//<<<<<<< HEAD
 
-=======
->>>>>>> aada321a86020219011f2fac714c27de79028ecb
+//=======
+//>>>>>>> aada321a86020219011f2fac714c27de79028ecb
 		ele->show();
         eles.push_back(ele);//将每个电梯对象 推到动态数组（向量）
 	}
@@ -41,19 +41,19 @@ void MainWindow::run(){
 	bld->move(100,100);
 	bld->show();
 	a_building = bld;
-<<<<<<< HEAD
+//<<<<<<< HEAD
     controller *ctl = new controller(nullptr, eles, FLOOR_NUM, 1);
     for(int i = 0;i < ELE_NUM; i++){
         eles[i]->setController(ctl);
     }
 
-=======
+//=======
 
-    controller *ctl = new controller(nullptr, eles, FLOOR_NUM, 1);//controller对象指针
+    //controller *ctl = new controller(nullptr, eles, FLOOR_NUM, 1);//controller对象指针
     for (int i = 0; i < ELE_NUM; ++i) {
         eles[i]->setController(ctl);//每一个
     }
->>>>>>> aada321a86020219011f2fac714c27de79028ecb
+//>>>>>>> aada321a86020219011f2fac714c27de79028ecb
     ctl->move(100,100);
     ctl->show();
     a_controller = ctl;

@@ -503,7 +503,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Full Load</string>
+    <string>Full_load_1</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton_2">
@@ -516,7 +516,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Overload</string>
+    <string>Over_load_1</string>
    </property>
   </widget>
  </widget>

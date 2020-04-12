@@ -32,6 +32,8 @@ controller::controller(QWidget *parent, std::vector<elevator*> _eles, int _FLOOR
     connect(ui->ele_reset_5,&QPushButton::clicked,this,[=]{reset(4);});
     connect(ui->ele_reset_6,&QPushButton::clicked,this,[=]{reset(5);});
     connect(ui->pushButton_8,&QPushButton::clicked,this,[=]{resume();});
+    connect(ui->pushButton,&QPushButton::clicked,this,[=]{Full_load();});
+    connect(ui->pushButton_2,&QPushButton::clicked,this,[=]{Overload();});
 }
 
 
@@ -58,6 +60,10 @@ void controller::timer_building_tick(){
 
 void controller::display_alert(int ele_no){
     QMessageBox::about(nullptr, "Alert!", "电梯：" + QString::number(ele_no) + "已发出警报！");
+    eles[ele_no]->destsInsider.clear();
+    eles[ele_no]->destsOutside.clear();
+    eles[ele_no]->recive_request(false,1,true);
+    reset(ele_no);
 }
 
 void controller::renew_label(){
@@ -105,4 +111,14 @@ void controller::resume(){
     for(int i = 0;i<6;i++){
         reset(i);
     }
+}
+
+void controller::Full_load(){
+    eles[1]->status = 6;
+    eles[1]->door = 1;//eles是一个向量组  eles[i]才是一个对象指针
+}
+
+void controller::Overload(){
+    eles[1]->status = 3;
+    eles[1]->door = 1;//eles是一个向量组  eles[i]才是一个对象指针
 }

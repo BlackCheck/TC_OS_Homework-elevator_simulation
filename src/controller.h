@@ -53,13 +53,14 @@ class controller : public QWidget{
 		void reset_ele(int ele);
 
         void stop_ele(int ele);
+        void Overload();
+        void reset(int ele);
+        void resume();
+        void Full_load();
+        void Emergency();
 
 //    public slots:
         void display_alert(int ele_no);
-        void Emergency();
-        void reset(int ele);
-        void resume();
-
 };
 
 #endif // BUILDING_H

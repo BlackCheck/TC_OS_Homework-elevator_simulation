@@ -23,7 +23,7 @@ elevator::elevator(QWidget *parent, int _no, int _FLOOR_NUM) : QWidget(parent), 
 			btn->setText(QString::number(i+1, 10));
 			btn->show();
 			connect(btn, &QPushButton::clicked, this, [=] {
-                if(status != 3 && status != 4 && status != 5) {
+                if(status != 3 && status != 4 && status != 5 && status != 6) {
                 destsInsider.push_back(i);}//当按下的时候就把内部i按钮push上去
             });
         Qbtns.push_back(btn);//将电梯内部按钮push上去
@@ -42,43 +42,58 @@ elevator::elevator(QWidget *parent, int _no, int _FLOOR_NUM) : QWidget(parent), 
 
 	// Setup buttons: ["开门", "关门", "报警"].
     connect(ui->pushButton_opendoor, &QPushButton::clicked, this, [=]{  //0 pause 1 up 2 down
-        if(status == 0) { if(door == 0 || door == 2) open_door(); }//0closed 2closing
+        if(status == 0) { if(door == 0 || door == 2) open_door(true); }//0closed 2closing
 		else QMessageBox::about(nullptr, "Error!", "运行中无法开门.");
 	});
-    connect(ui->pushButton_closedoor, &QPushButton::clicked, this, [=]{//关门？
-        if(door == 0 || door == 2) QMessageBox::about(nullptr, "Error!", "门已经关上了.");//QMessageBox::about(0,"标题文本","内容文本")
+    connect(ui->pushButton_closedoor, &QPushButton::clicked, this, [=]{
+        if(door == 0 || door == 2) {QMessageBox::about(nullptr, "Error!", "门已经关上了.");close_door();}//QMessageBox::about(0,"标题文本","内容文本")
+        else close_door();
     });
     connect(ui->pushButton_alert, &QPushButton::clicked, this, [=]{ctrl->display_alert(no+1);});//connect 最后可以用一个匿名函数代替
-
 }
 
 elevator::~elevator(){
 	delete ui;
 }
 
-void elevator::open_door(){
-    door = 3; renew_label();//Opening: 800ms.opening 开门过程状态维持0.8秒
+void elevator::open_door(bool flag){  //赋值过程
+    door = 3; renew_label();//Opening: 800ms.opening 开门过程状态维持1秒
     QElapsedTimer t1;//计数器
     t1.start();//计时器开始
-    while(t1.elapsed() < 800)//两个操作间时间流逝小于0.8S
+    while(t1.elapsed() < 1000)//两个操作间时间流逝小于1S  1代表1毫秒
     QCoreApplication::processEvents();//避免程序死机
 
-    door = 1; renew_label();// Opened: 1000ms.opened 开门 开门时间1秒
+    door = 1; renew_label();// Opened: 1000ms.opened 开门 开门时间10秒
 	QElapsedTimer t2;
 	t2.start();
-	while(t2.elapsed() < 1000) QCoreApplication::processEvents();
-    QCoreApplication::processEvents();//避免程序死机
+    while(t2.elapsed() < 9000) QCoreApplication::processEvents();
 
-    door = 2;  renew_label(); //Closing: 800ms.closing  关门0.8秒
+    if(flag == true){
+    door = 1; renew_label();// Opened: 1000ms.opened 开门 开门时间10秒
+    QElapsedTimer t2;
+    t2.start();
+    while(t2.elapsed() < 9000) QCoreApplication::processEvents();
+    }
+
+    door = 2;  renew_label(); //Closing: 800ms.closing  关门1秒
 	QElapsedTimer t3;
 	t3.start();
-	while(t3.elapsed() < 800) QCoreApplication::processEvents();
-    QCoreApplication::processEvents();//避免程序死机
+    while(t3.elapsed() < 1000) QCoreApplication::processEvents();
 
     door = 0;  renew_label(); //Closed.closed
-    QCoreApplication::processEvents();//避免程序死机
 }
 
+void elevator::close_door(){
+    door = 2;  renew_label(); //Closing: 1000ms.closing  关门1秒
+    QElapsedTimer t1;
+    t1.start();
+    while(t1.elapsed() < 1000) QCoreApplication::processEvents();
+
+    door = 0;  renew_label(); //Closed.closed
+    QElapsedTimer t2;
+    t2.start();
+    while(t2.elapsed() < 9000) QCoreApplication::processEvents();
+}
 void elevator::renew_label(){
 	ui->label_status->setText(statusStr[status]);
 	ui->label_door->setText(doorStr[door]);
@@ -89,7 +104,7 @@ void elevator::renew_label(){
 
 //电梯运行逻辑判断
 bool elevator::recive_request(bool up, int floor, bool forceRecive){//向上 和 要down c>f 50>40
-    if(!forceRecive && ( (up && status == 2 && currentFloor > floor)|| ( !up && status == 1 && currentFloor < floor )||status == 3||status == 4)) return false;
+    if(!forceRecive && ( (up && status == 2 && currentFloor > floor)|| ( !up && status == 1 && currentFloor < floor )||status == 3||status == 4||status == 6)) return false;
     //不强迫接受 并且 （1.要上升  状态是下降  当前层>要去的楼层数 或者 2.要下降  状态是上升  当前层<要去的楼层数）  1.继续上升  2.继续下降  这两种都不接受请求
 	bool hasIn = false;
     for(auto i : destsOutside) if(i == floor) hasIn = true;//当前楼梯数=从外部按键的命令楼梯数  destsoutside 是int 类型
@@ -121,8 +136,8 @@ void elevator::check_when_pause(){//先判断  上行下行  在让按钮使能
 	bool downDest = false; // If has tasks needing downstair.
     for(auto i : dests){//遍历
         if(i <  currentFloor) downDest = true;//要求<当前
-		if(i >  currentFloor) upDest = true;
-		if(i == currentFloor) open_door();
+        if(i >  currentFloor) upDest = true;
+        if(i == currentFloor) open_door(false);
 	}
 
     auto it = std::find(destsInsider.begin(), destsInsider.end(), currentFloor);//当前命令执行完  就擦除储存命令的地方
@@ -158,7 +173,7 @@ void elevator::check_when_run(){
 		if(i == currentFloor){
             auto beforeStatus = status;//保持当前状态  继续UP OR DOWN
             status = 0;
-			open_door();
+            open_door(false);
 			status = beforeStatus;
 		}
 	}

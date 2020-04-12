@@ -114,6 +114,7 @@ void building::ele_select_send(bool up, int floor){
     }
 }
 
+
 void building::judge_stop(int ele,elevator *ele_num){
     if(eles[ele]->status == 3 || eles[ele]->status == 4){
         ele_num->cancel_request(eles[ele]->currentFloor);
@@ -128,7 +129,7 @@ void building::timer_building_tick(){
             if(ELE_SELECT_MODE == 1){
                 for(auto j : eles) j->cancel_request(eles[i]->currentFloor);
             }
-            floorBtnsUp[unsigned(eles[i]->currentFloor)]->setEnabled(true);
+            floorBtnsUp[unsigned(eles[i]->currentFloor)]->setEnabled(true);//上下小箭头
             floorBtnsDown[unsigned(eles[i]->currentFloor)]->setEnabled(true);
         }
        judge_stop(i,eles[i]);

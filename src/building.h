@@ -25,8 +25,8 @@ class building : public QWidget{
 	private:
 		Ui::building *ui;
 	public:
-		int ELE_NUM = 5;
-		int FLOOR_NUM = 20;
+        int ELE_NUM = 6;
+        int FLOOR_NUM = 56;
 		int ELE_SELECT_MODE = 1;
 		std::vector<elevator*> eles;
 		std::vector<QSlider*>  eleSliders;
@@ -45,7 +45,7 @@ class building : public QWidget{
 		// Only be used in the ELE_SELECT_MODE_1.
 		int  ele_rate(bool reqUp, int reqFloor, int eleFloor, int eleStatus);
 		// See "recive_request" in class "elevator".
-		bool send_request(bool up = true, int floor = 1, elevator *ele = nullptr, bool forceRecive = false);
+        bool send_request(bool up = true, int floor = 1, elevator *ele = nullptr);
         void judge_stop(int ele,elevator *ele_num);
 };
 

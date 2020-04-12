@@ -34,6 +34,7 @@ controller::controller(QWidget *parent, std::vector<elevator*> _eles, int _FLOOR
     connect(ui->pushButton_8,&QPushButton::clicked,this,[=]{resume();});
     connect(ui->pushButton,&QPushButton::clicked,this,[=]{Full_load();});
     connect(ui->pushButton_2,&QPushButton::clicked,this,[=]{Overload();});
+
 }
 
 
@@ -48,22 +49,14 @@ bool controller::receive_request(int ele_no){
 }
 
 void controller::timer_building_tick(){
-	for(unsigned int i = 0; i < unsigned(ELE_NUM); i++){
-        renew_label();
-		if(eles[i]->status == 0 || eles[i]->status == 3){
-			if(ELE_SELECT_MODE == 3){
-				for(auto j : eles) j->cancel_request(eles[i]->currentFloor);
-			}
-		}
-	}
+    renew_label();
 }
 
 void controller::display_alert(int ele_no){
-    QMessageBox::about(nullptr, "Alert!", "电梯：" + QString::number(ele_no) + "已发出警报！");
+    QMessageBox::about(nullptr, "Alert!", "电梯：" + QString::number(ele_no+1) + "已发出警报！");
     eles[ele_no]->destsInsider.clear();
     eles[ele_no]->destsOutside.clear();
-    eles[ele_no]->recive_request(false,1,true);
-    reset(ele_no);
+    eles[ele_no]->status = 4;
 }
 
 void controller::renew_label(){
@@ -103,8 +96,10 @@ void controller::Emergency(){
 void controller::reset(int ele){
     eles[ele]->status = 0;
     eles[ele]->door = 0;
-    eles[ele]->Qbtns[eles[ele]->currentFloor]->setEnabled(true);
-
+    //eles[ele]->Qbtns[eles[ele]->currentFloor]->setEnabled(true);
+    eles[0]->flag = 0;
+    ui->pushButton->setEnabled(true);
+    ui->pushButton_2->setEnabled(true);
 }
 
 void controller::resume(){
@@ -114,11 +109,12 @@ void controller::resume(){
 }
 
 void controller::Full_load(){
-    eles[1]->status = 6;
-    eles[1]->door = 1;//eles是一个向量组  eles[i]才是一个对象指针
+    eles[0]->flag = 1;
+    eles[0]->door = 1;//eles是一个向量组  eles[i]才是一个对象指针
+    ui->pushButton->setEnabled(false);
 }
 
 void controller::Overload(){
-    eles[1]->status = 3;
-    eles[1]->door = 1;//eles是一个向量组  eles[i]才是一个对象指针
+    stop_ele(0);
+    ui->pushButton_2->setEnabled(false);
 }

@@ -19,10 +19,6 @@ void MainWindow::run(){
 //	int FLOOR_NUM = ui->spinBox_floor->value();
 	int FLOOR_NUM = 56;
 	int ELE_NUM = 6;
-
-
-
-
 	for(int i = 0; i < ELE_NUM; i++){
         elevator *ele = new elevator(nullptr, i, FLOOR_NUM);//elevator对象指针
 

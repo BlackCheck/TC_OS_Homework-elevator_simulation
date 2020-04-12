@@ -27,15 +27,16 @@ class elevator : public QWidget{
 		Ui::elevator *ui;
 	public:
 		int no = 0; // This elevator's id.
-        int door = 0; // The status of door ∈ [0: closed, 1: opened, 2: closing, 3:opening].
-        int status = 0; //  The status of this elevator ∈ [0: pause暂停,1: up, 2: down,3: stop停用,4: broken,5:reset,6:full].
+        int door = 0; // The status of door ∈ [0: closed, 1: opened].
+        int status = 0; //  The status of this elevator ∈ [0: pause暂停,1: up, 2: down,3: stop停用,4: broken,5:reset].
         int currentFloor = 0;//floor
         int trueCurrentFloor = 0; // true floor number
         int FLOOR_NUM = 20;//无用
+        int flag = 0;
 
 		const int ELEVATOR_TIMER_TICK = 800; // Frequency, unit: ms;
 
-        QString statusStr[7] = {"P", "↑", "↓","Stop","Broken","reset","full"};
+        QString statusStr[6] = {"P", "↑", "↓","Stop","Broken","Reset"};
 		QString doorStr[4]   = {"Closed", "Opened", "Closing", "Opening"};
 
 		std::vector<int> dests; // This elevator's destations <- destsInsider + destsOutside.
@@ -54,7 +55,7 @@ class elevator : public QWidget{
 		void cancel_request(int floor);
 		// Recive task request form outside(building), and add it to destO. .
 		// See "send_request()" in class "building".
-		bool recive_request(bool up = true, int floor = 1, bool forceRecive = false);
+        bool recive_request(bool up = true, int floor = 1);
 
 		// set controller
         void setController(controller *_ctrl);

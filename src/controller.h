@@ -57,6 +57,8 @@ class controller : public QWidget{
 //    public slots:
         void display_alert(int ele_no);
         void Emergency();
+        void reset(int ele);
+        void resume();
 
 };
 

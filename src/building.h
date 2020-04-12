@@ -19,7 +19,7 @@ class building : public QWidget{
 	public:
 		explicit building( QWidget *parent = nullptr,
 						   std::vector<elevator*> _eles = {},
-						   int _FLOOR_NUM = 20, int _ELE_SELECT_MODE = 1
+                           int _FLOOR_NUM = 20, int _ELE_SELECT_MODE = 1
 						 );
 		~building();
 	private:

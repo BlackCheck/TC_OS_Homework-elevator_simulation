@@ -23,10 +23,9 @@ elevator::elevator(QWidget *parent, int _no, int _FLOOR_NUM) : QWidget(parent), 
 			btn->setText(QString::number(i+1, 10));
 			btn->show();
 			connect(btn, &QPushButton::clicked, this, [=] {
-                Qbtns[unsigned(i)]->setEnabled(false);//connect最后一个参数是按下产生的效果 此时是按下的时候是禁用按钮的
-                if(status != 3 && status != 4){
+                if(status != 3 && status != 4 && status != 5) {
                 destsInsider.push_back(i);}//当按下的时候就把内部i按钮push上去
-			});
+            });
         Qbtns.push_back(btn);//将电梯内部按钮push上去
 	}
 
@@ -68,13 +67,16 @@ void elevator::open_door(){
 	QElapsedTimer t2;
 	t2.start();
 	while(t2.elapsed() < 1000) QCoreApplication::processEvents();
+    QCoreApplication::processEvents();//避免程序死机
 
     door = 2;  renew_label(); //Closing: 800ms.closing  关门0.8秒
 	QElapsedTimer t3;
 	t3.start();
 	while(t3.elapsed() < 800) QCoreApplication::processEvents();
+    QCoreApplication::processEvents();//避免程序死机
 
     door = 0;  renew_label(); //Closed.closed
+    QCoreApplication::processEvents();//避免程序死机
 }
 
 void elevator::renew_label(){
@@ -93,8 +95,10 @@ bool elevator::recive_request(bool up, int floor, bool forceRecive){//向上 和
     for(auto i : destsOutside) if(i == floor) hasIn = true;//当前楼梯数=从外部按键的命令楼梯数  destsoutside 是int 类型
     if(!hasIn) destsOutside.push_back(floor);//相当于 接受了请求  *核心
 
-	// Force to check.
-    status == 0 ? check_when_pause() : check_when_run();// 是否暂停 以检查运行和停止
+    if(status == 0||status == 5||status == 3||status == 4)
+        check_when_pause();
+    else
+        check_when_run();
 
 	return true;
 }
@@ -179,18 +183,13 @@ void elevator::timer_elevator_tick(){
 	currentFloor += status == 1 ? 1 : status == 2 ? -1 : 0;
     trueCurrentFloor = currentFloor+1;
 
-    if(status==0) check_when_pause();
-    else if(status == 3||status == 4) return ;
+    if(status == 0 || status == 5) check_when_pause();
+    else if(status == 3 || status == 4) return ;
     else check_when_run();
 
 	renew_label();
 }
 
-bool elevator::reset(){
-    currentFloor = 0;
-    door = 1;
-    ui->label_door->setText(doorStr[door]);
-}
 void elevator::setController(controller *_ctrl){  //初始化一个控模板
     ctrl = _ctrl;
 }

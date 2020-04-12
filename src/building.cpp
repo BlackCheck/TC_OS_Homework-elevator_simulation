@@ -104,52 +104,15 @@ int building::ele_rate(bool reqUp, int reqFloor, int eleFloor, int eleStatus){//
 
 // 控制端发送调用电梯的请求 true = up false = down  外部控制
 void building::ele_select_send(bool up, int floor){
-	ui->label_bar->setText("开始处理来自"+ QString::number(floor + 1, 10) +"层的电梯调度请求...");
 	if(ELE_SELECT_MODE == 1){
-		eleRatings.clear();
-
-
-        for(int i = 0; i < ELE_NUM; i++)//此floor是要求的楼层数
-			eleRatings.push_back({i, ele_rate(up, floor, eles[unsigned(i)]->currentFloor, eles[unsigned(i)]->status)});
-		    std::sort(eleRatings.begin(), eleRatings.end(), [](std::pair<int, int> &a, std::pair<int, int> &b){
-                        return a.second < b.second;//对每层电梯进行权重排序 由大到小
-		    });
-
-		bool successSend = false;
-        for(auto i : eleRatings) {//给第几个发
-            if(send_request(up, floor, eles[unsigned(i.first)])){//i.first 是权重最大的电梯  但是语法不懂
-				successSend = true;
-				ui->label_bar->setText("已为来自"+ QString::number(floor + 1, 10) +"层的请求调度" + QString::number(i.first + 1, 10) + "号电梯.");
-				return;
-			}else{
-				ui->label_bar->setText("为来自"+ QString::number(floor + 1, 10) +"层调度" + QString::number(i.first + 1, 10) + "号电梯的请求被拒绝.");
-				continue;
-			}
-		}
-
-		// 强制调度
-		if(successSend == false) {
-            send_request(up, floor, eles[unsigned(eleRatings.begin()->first)], true);//？
-			ui->label_bar->setText("已为来自"+ QString::number(floor + 1, 10) +"层的请求强制调度" + QString::number(eleRatings.begin()->first + 1, 10) + "号电梯.");
-		}
-
-
-	}
-
-	// 优化算法1，舍弃其余
-	else if(ELE_SELECT_MODE == 2) {
-		int temp = rand() % (ELE_NUM);
-		send_request(up, floor, eles[unsigned(temp)], true);
-		ui->label_bar->setText("已为来自"+ QString::number(floor + 1, 10) +"层的请求选择" + QString::number(temp + 1, 10) + "号电梯.");
-	}
-	else {
-		for(auto i : eles){
-			send_request(up, floor, i, true);
-			ui->label_bar->setText("已将来自"+ QString::number(floor + 1, 10) +"层的请求发送至所有电梯.");
-		}
-	}
+        for(int i = 0;i < 6;i++){
+            if(eles[i]->status == 5)
+                send_request(up, 1, eles[i], true);
+            else
+                send_request(up, floor, eles[i], true);
+        }
+    }
 }
-
 
 void building::judge_stop(int ele,elevator *ele_num){
     if(eles[ele]->status == 3 || eles[ele]->status == 4){
@@ -161,9 +124,8 @@ void building::judge_stop(int ele,elevator *ele_num){
 void building::timer_building_tick(){
     for(unsigned int i = 0; i < unsigned(ELE_NUM); i++){
         renew_label(i);
-        if(eles[i]->status == 0){
-            if(ELE_SELECT_MODE == 3){
-                //ui->label_bar->setText(QString::number(i + 1, 10) +"号电梯到达, 取消其他电梯请求.");
+        if(eles[i]->status == 0 || eles[i]->status == 3 || eles[i]->status == 4){
+            if(ELE_SELECT_MODE == 1){
                 for(auto j : eles) j->cancel_request(eles[i]->currentFloor);
             }
             floorBtnsUp[unsigned(eles[i]->currentFloor)]->setEnabled(true);

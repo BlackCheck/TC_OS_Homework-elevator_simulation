@@ -25,7 +25,13 @@ controller::controller(QWidget *parent, std::vector<elevator*> _eles, int _FLOOR
     connect(ui->ele_stop_5,&QPushButton::clicked,this,[=]{stop_ele(4);});
     connect(ui->ele_stop_6,&QPushButton::clicked,this,[=]{stop_ele(5);});
     connect(ui->pushButton_7,&QPushButton::clicked,this,[=]{Emergency();});
-
+    connect(ui->ele_reset_1,&QPushButton::clicked,this,[=]{reset(0);});
+    connect(ui->ele_reset_2,&QPushButton::clicked,this,[=]{reset(1);});
+    connect(ui->ele_reset_3,&QPushButton::clicked,this,[=]{reset(2);});
+    connect(ui->ele_reset_4,&QPushButton::clicked,this,[=]{reset(3);});
+    connect(ui->ele_reset_5,&QPushButton::clicked,this,[=]{reset(4);});
+    connect(ui->ele_reset_6,&QPushButton::clicked,this,[=]{reset(5);});
+    connect(ui->pushButton_8,&QPushButton::clicked,this,[=]{resume();});
 }
 
 
@@ -78,6 +84,8 @@ void controller::renew_label(){
 void controller::stop_ele(int ele){
     eles[ele]->status = 3;
     eles[ele]->door = 1;//eles是一个向量组  eles[i]才是一个对象指针
+    eles[ele]->destsInsider.clear();
+    eles[ele]->destsOutside.clear();
 }
 
 void controller::Emergency(){
@@ -86,3 +94,15 @@ void controller::Emergency(){
     }
 }
 
+void controller::reset(int ele){
+    eles[ele]->status = 0;
+    eles[ele]->door = 0;
+    eles[ele]->Qbtns[eles[ele]->currentFloor]->setEnabled(true);
+
+}
+
+void controller::resume(){
+    for(int i = 0;i<6;i++){
+        reset(i);
+    }
+}

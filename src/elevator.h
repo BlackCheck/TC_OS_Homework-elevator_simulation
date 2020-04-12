@@ -28,7 +28,7 @@ class elevator : public QWidget{
 	public:
 		int no = 0; // This elevator's id.
         int door = 0; // The status of door ∈ [0: closed, 1: opened, 2: closing, 3:opening].
-        int status = 0; //  The status of this elevator ∈ [0: pause暂停,1: up, 2: down,3: stop停用,4: broken].
+        int status = 0; //  The status of this elevator ∈ [0: pause暂停,1: up, 2: down,3: stop停用,4: broken,5:reset].
         int currentFloor = 0;//floor
         int trueCurrentFloor = 0; // true floor number
         int FLOOR_NUM = 20;//无用

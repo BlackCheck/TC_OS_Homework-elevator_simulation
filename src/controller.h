@@ -12,7 +12,7 @@
 
 // This class is buttons on the outside of the elevator on each floor
 
-namespace Ui { class controller; }//Ui controller 是一个类指针
+namespace Ui { class controller; }
 
 class controller : public QWidget{
 	Q_OBJECT
@@ -26,7 +26,7 @@ class controller : public QWidget{
 		Ui::controller *ui;
 	public:
 		int ELE_NUM = 5;
-        int FLOOR_NUM = 20;//每个方块显示得数目
+        int FLOOR_NUM = 20;
 		int ELE_SELECT_MODE = 1;
 		std::vector<elevator*> eles;
 		std::vector<QSlider*>  eleSliders;
@@ -35,6 +35,7 @@ class controller : public QWidget{
 		// Store every elevator's rating, for elevator selecting.
 		// Only be used in the ELE_SELECT_MODE_1.
 		std::vector<std::pair<int, int>> eleRatings;
+
 	public:
 		void timer_building_tick(); // Run every 0.1s.
         void renew_label();
@@ -45,13 +46,11 @@ class controller : public QWidget{
 		int  ele_rate(bool reqUp, int reqFloor, int eleFloor, int eleStatus);
 		// See "recive_request" in class "elevator".
 		bool send_request(bool up = true, int floor = 1, elevator *ele = nullptr, bool forceRecive = false);
-
 		bool receive_request(int ele_no);
-		
+
 		void send_stop_request(elevator * ele);
 		void recive_stop_request(elevator * ele);
 		void reset_ele(int ele);
-
         void stop_ele(int ele);
         void Overload();
         void reset(int ele);

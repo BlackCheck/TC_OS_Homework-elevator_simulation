@@ -1,15 +1,15 @@
 #include "elevator.h"
 #include "controller.h"
 #include "ui_elevator.h"
-//上升下降请求在接受后 都存放在dests中（内外） 然后进行上升下降判断
-//要想STOP只能在判断时候就不存放
-elevator::elevator(QWidget *parent, int _no, int _FLOOR_NUM) : QWidget(parent), ui(new Ui::elevator){//派生类继承基类函数  新对象
+
+elevator::elevator(QWidget *parent, int _no, int _FLOOR_NUM) : QWidget(parent), ui(new Ui::elevator){
 	ui->setupUi(this);
-    no = _no;//电梯号
-    FLOOR_NUM = _FLOOR_NUM; //层数
-    QGroupBox *box = ui->groupBox_destination;//框子
-    ctrl = nullptr;//避免内存溢出 初始化
-    flag = 0;//FULL 状态判断位
+    no = _no;
+    FLOOR_NUM = _FLOOR_NUM;
+    QGroupBox *box = ui->groupBox_destination;
+    ctrl = nullptr;
+    flag = 0;
+    flag_1 = 0;
 
 	// resize the window and box's size to include all the buttons.
 	if(FLOOR_NUM > 20){
@@ -17,68 +17,70 @@ elevator::elevator(QWidget *parent, int _no, int _FLOOR_NUM) : QWidget(parent), 
 		this->setGeometry(0, 0, 210 * (FLOOR_NUM / 21 + 1) + 100, 380);
 	}
 
-    // Draw btns.//一排按钮
+    // Draw btns.
 	for(int i = 0; i < FLOOR_NUM; i++){
-        QPushButton *btn = new QPushButton(box);//Qpushbutton参数？
+        QPushButton *btn = new QPushButton(box);
 			btn->setGeometry(20+40*(i%5)+210*(i/20), 30+40*(i%20/5), 30, 30);
 			btn->setText(QString::number(i+1, 10));
 			btn->show();
 			connect(btn, &QPushButton::clicked, this, [=] {
                 if(status != 3 && status != 4 && status != 5) {
-                destsInsider.push_back(i);}//当按下的时候就把内部i按钮push上去
+                   Qbtns[unsigned(i)]->setEnabled(false);
+                   destsInsider.push_back(i);}
             });
-        Qbtns.push_back(btn);//将电梯内部按钮push上去
+        Qbtns.push_back(btn);
 	}
 
 	// Set title , label, slider on the window.
-    this->setWindowTitle("电梯内部: " + QString::number(no+1, 10));//字符串直接相加就可以，10指间距
+    this->setWindowTitle("电梯内部: " + QString::number(no+1, 10));
 	ui->label_NUM_FLOOR->setText(QString::number(FLOOR_NUM, 10));
-    ui->verticalSlider_currentFloor->setMaximum(FLOOR_NUM);//滚条
+    ui->verticalSlider_currentFloor->setMaximum(FLOOR_NUM);
 
-	// todo: ?
-    // Setup the timer. Run timer_elevator_tick() every ELEVATOR_TIMER_TICK ms.//控制时间？？
+    // Setup the timer. Run timer_elevator_tick() every ELEVATOR_TIMER_TICK ms.
 	QTimer *timer = new QTimer(this);
 	connect(timer, &QTimer::timeout, this, &elevator::timer_elevator_tick);
-    timer->start(ELEVATOR_TIMER_TICK);//800毫秒 0.8秒控制  0.8秒更新标签  即0.8秒上升 下降
+    timer->start(ELEVATOR_TIMER_TICK);
 
 	// Setup buttons: ["开门", "关门", "报警"].
-    connect(ui->pushButton_opendoor, &QPushButton::clicked, this, [=]{  //0 pause 1 up 2 down
-        if(status == 0) { if(door == 0 || door == 2) open_door(true); }//0closed 2closing
+    connect(ui->pushButton_opendoor, &QPushButton::clicked, this, [=]{
+        if(status == 0) { if(door == 0 || door == 2) open_door(); }
+        else if(status == 4) door = 1;
 		else QMessageBox::about(nullptr, "Error!", "运行中无法开门.");
 	});
     connect(ui->pushButton_closedoor, &QPushButton::clicked, this, [=]{
-        if(door == 0 || door == 2) {QMessageBox::about(nullptr, "Error!", "门已经关上了.");close_door();}//QMessageBox::about(0,"标题文本","内容文本")
+        if(door == 0 || door == 2) {QMessageBox::about(nullptr, "Error!", "门已经关上了.");close_door();}
         else close_door();
     });
-    connect(ui->pushButton_alert, &QPushButton::clicked, this, [=]{ctrl->display_alert(no);});//connect 最后可以用一个匿名函数代替
+    connect(ui->pushButton_alert, &QPushButton::clicked, this, [=]{ctrl->display_alert(no);});
 }
 
 elevator::~elevator(){
 	delete ui;
 }
 
-void elevator::open_door(bool flag){
+void elevator::open_door(){
 
-    door = 1; renew_label();// Opened: 1000ms.opened 开门 开门时间10秒
+    door = 1; renew_label();// Opened: 9000ms.
 	QElapsedTimer t2;
 	t2.start();
     while(t2.elapsed() < 9000)
         QCoreApplication::processEvents();
 
-    door = 0;  renew_label(); //Closed.closed
+    door = 0;  renew_label(); //Closed.
+    QElapsedTimer t1;
+    t1.start();
+    while(t1.elapsed() < 2000)
+     QCoreApplication::processEvents();
 }
 
 void elevator::close_door(){
-    door = 2;  renew_label(); //Closing: 1000ms.closing  关门1秒
-    QElapsedTimer t1;
-    t1.start();
-    while(t1.elapsed() < 1000) QCoreApplication::processEvents();
 
-    door = 0;  renew_label(); //Closed.closed
+    door = 0;  renew_label(); //Closed
     QElapsedTimer t2;
     t2.start();
     while(t2.elapsed() < 9000) QCoreApplication::processEvents();
 }
+
 void elevator::renew_label(){
 	ui->label_status->setText(statusStr[status]);
 	ui->label_door->setText(doorStr[door]);
@@ -87,50 +89,45 @@ void elevator::renew_label(){
 	ui->verticalSlider_currentFloor->setValue(currentFloor + 1);
 }
 
-//电梯运行逻辑判断
-bool elevator::recive_request(bool up, int floor){//向上 和 要down c>f 50>40
-    if( (up && status == 2 && currentFloor > floor)|| ( !up && status == 1 && currentFloor < floor )||status == 3||status == 4) return false;
-    //不强迫接受 并且 （1.要上升  状态是下降  当前层>要去的楼层数 或者 2.要下降  状态是上升  当前层<要去的楼层数）  1.继续上升  2.继续下降  这两种都不接受请求
-    else if(floor == 0) open_door(false);
-    else{
-        bool hasIn = false;
-        for(auto i : destsOutside) if(i == floor) hasIn = true;//当前楼梯数=从外部按键的命令楼梯数  destsoutside 是int 类型
-        if(!hasIn) destsOutside.push_back(floor);//相当于 接受了请求  *核心
+bool elevator::recive_request(bool up, int floor){
 
-        if(status == 0||status == 5||status == 3)
-            check_when_pause();
-        else
-            check_when_run();
-    }
+    if( (up && status == 2 && currentFloor > floor)|| ( !up && status == 1 && currentFloor < floor )||status == 3||status == 4||status == 5) return false;
+    else if(floor == currentFloor) open_door();
+    bool hasIn = false;
+    for(auto i : destsOutside) if(i == floor) hasIn = true;
+    if(!hasIn) destsOutside.push_back(floor);
+
+    if(status == 0||status == 5||status == 3)
+        check_when_pause();
+     else
+        check_when_run();
 
 	return true;
 }
 
-
 void elevator::cancel_request(int floor){
-    auto it = std::find(destsOutside.begin(), destsOutside.end(), floor);//寻找输入楼梯数  是不是包含在数组内
-    if(it != destsOutside.end()){   //find返回容器指针 不等于 说明找到了
-        destsOutside.erase(it);//擦除  相当于是实现取消功能 *核心
-        Qbtns[unsigned(currentFloor)]->setEnabled(true);//本层楼梯按钮可以被重新激活
+    auto it = std::find(destsOutside.begin(), destsOutside.end(), floor);
+    if(it != destsOutside.end()){
+        destsOutside.erase(it);
+        Qbtns[unsigned(currentFloor)]->setEnabled(true);
     }
 }
 
-
-void elevator::check_when_pause(){//先判断  上行下行  在让按钮使能
+void elevator::check_when_pause(){
 	dests.insert(dests.end(), destsInsider.begin(), destsInsider.end());
-    dests.insert(dests.end(), destsOutside.begin(), destsOutside.end());//两者相加 int类型动态数组
-    if(dests.size() == 0) return ;//返回空 结束函数
+    dests.insert(dests.end(), destsOutside.begin(), destsOutside.end());
+    if(dests.size() == 0) return ;
 
 	bool upDest   = false; // If has tasks needing upstair.
 	bool downDest = false; // If has tasks needing downstair.
-    for(auto i : dests){//遍历
-        if(i <  currentFloor) downDest = true;//要求<当前
+    for(auto i : dests){
+        if(i <  currentFloor) downDest = true;
         if(i >  currentFloor) upDest = true;
-        if(i == currentFloor) open_door(false);
+        if(i == currentFloor) open_door();
 	}
 
-    auto it = std::find(destsInsider.begin(), destsInsider.end(), currentFloor);//当前命令执行完  就擦除储存命令的地方
-    if(it != destsInsider.end()){//找到了
+    auto it = std::find(destsInsider.begin(), destsInsider.end(), currentFloor);
+    if(it != destsInsider.end()){
 		destsInsider.erase(it);
 		Qbtns[unsigned(currentFloor)]->setEnabled(true);
 	}
@@ -140,18 +137,18 @@ void elevator::check_when_pause(){//先判断  上行下行  在让按钮使能
 		Qbtns[unsigned(currentFloor)]->setEnabled(true);
 	}
 
-    if(currentFloor >= FLOOR_NUM / 2 && (upDest))				  status = 1;//当前层>=总层数一半 并且  要上升  结果 上升
-    else if(currentFloor >= FLOOR_NUM / 2 && !upDest && downDest) status = 2;//当前成>=总层数一半 并且 不上升  并且要下降  结果下降
-    else if(currentFloor <= FLOOR_NUM / 2 && (downDest))		  status = 2;//当前层
+    if(currentFloor >= FLOOR_NUM / 2 && (upDest))				  status = 1;
+    else if(currentFloor >= FLOOR_NUM / 2 && !upDest && downDest) status = 2;
+    else if(currentFloor <= FLOOR_NUM / 2 && (downDest))		  status = 2;
 	else if(currentFloor <= FLOOR_NUM / 2 && upDest && !downDest) status = 1;
-    dests.clear();//清空容器
+    dests.clear();
 }
 
 void elevator::check_when_run(){
 	dests.insert(dests.end(), destsInsider.begin(), destsInsider.end());
 	dests.insert(dests.end(), destsOutside.begin(), destsOutside.end());
 	if(dests.size() == 0){
-        status = 0; //没有需求就暂停
+        status = 0;
 		return;
 	}
 	bool upDest   = false;
@@ -160,34 +157,30 @@ void elevator::check_when_run(){
 		if(i < currentFloor){downDest = true;}
 		if(i > currentFloor){upDest = true;}
 		if(i == currentFloor){
-            auto beforeStatus = status;//保持当前状态  继续UP OR DOWN
-            if(status ==0 )
-                status = 0;
-            else if(status == 6)
-                status = 6;
-            open_door(false);
-			status = beforeStatus;
+            status = 0;
+            open_door();
 		}
 	}
-    auto it = std::find(destsInsider.begin(), destsInsider.end(), currentFloor);//返回当前一个指针 指向容器的一个值
+    auto it = std::find(destsInsider.begin(), destsInsider.end(), currentFloor);
 	if(it != destsInsider.end()){
 		destsInsider.erase(it);
 		Qbtns[unsigned(currentFloor)]->setEnabled(true);
 	}
-    it = std::find(destsOutside.begin(), destsOutside.end(), currentFloor);//使能按钮
+
+    it = std::find(destsOutside.begin(), destsOutside.end(), currentFloor);
 	if(it != destsOutside.end()){
 		destsOutside.erase(it);
 		Qbtns[unsigned(currentFloor)]->setEnabled(true);
 	}
 
-    if(status == 1 && !upDest && downDest )		   status = 2;//down
-    else if(status == 2 && upDest && !downDest)    status = 1;//up
-    else if(!upDest && !downDest && status != 4)   status = 0;//pause
+    if(status == 1 && !upDest && downDest )		   status = 2;
+    else if(status == 2 && upDest && !downDest)    status = 1;
+    else if(!upDest && !downDest && status != 4)   status = 0;
     else if(status == 4 )                          status = 4;
 	dests.clear();
 }
 
-void elevator::timer_elevator_tick(){//************前面是修改状态 电梯真正跑起来是计时器**********
+void elevator::timer_elevator_tick(){
 
     if(status == 1)
         currentFloor += 1;
@@ -195,8 +188,15 @@ void elevator::timer_elevator_tick(){//************前面是修改状态 电梯�
         currentFloor -= 1;
     else if(status == 0)
         currentFloor += 0;
-    else if(status == 4 && currentFloor != 0)//renew_label 是currentFloor +1
+    else if(status == 4 && currentFloor != 0)
         currentFloor -= 1;
+
+    if(status == 4)
+        for(int i = 0;i < 56;i++)
+            Qbtns[i]->setEnabled(true);
+
+    if(status == 4 && currentFloor == 0)
+        door = 1;
 
     renew_label();
 
@@ -208,6 +208,6 @@ void elevator::timer_elevator_tick(){//************前面是修改状态 电梯�
 
 }
 
-void elevator::setController(controller *_ctrl){  //初始化一个控模板
+void elevator::setController(controller *_ctrl){
     ctrl = _ctrl;
 }

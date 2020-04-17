@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow){
 	ui->setupUi(this);
     connect(ui->pushButton_exit, &QPushButton::clicked, this, [=]{exit(0);});
@@ -15,50 +14,34 @@ MainWindow::~MainWindow(){
 }
 
 void MainWindow::run(){
-    // 设置层数
-//	int FLOOR_NUM = ui->spinBox_floor->value();
 	int FLOOR_NUM = 56;
 	int ELE_NUM = 6;
 	for(int i = 0; i < ELE_NUM; i++){
-        elevator *ele = new elevator(nullptr, i, FLOOR_NUM);//elevator对象指针
-
-		// windows
-//		ele->move( 5 + i % (GetSystemMetrics(SM_CXSCREEN) / ele->width()) * (ele->width() + 5),
-//				   5 + ((i + 1) * ele->width() / GetSystemMetrics(SM_CXSCREEN)) * (ele->height() + 35)
-//				 );
-//<<<<<<< HEAD
-
-//=======
-//>>>>>>> aada321a86020219011f2fac714c27de79028ecb
+        elevator *ele = new elevator(nullptr, i, FLOOR_NUM);
+    // windows
 		ele->show();
-        eles.push_back(ele);//将每个电梯对象 推到动态数组（向量）
+        eles.push_back(ele);
 	}
+
 	building *bld = new building(nullptr, eles, FLOOR_NUM, 1);
 	bld->move(100,100);
 	bld->show();
 	a_building = bld;
-//<<<<<<< HEAD
     controller *ctl = new controller(nullptr, eles, FLOOR_NUM, 1);
     for(int i = 0;i < ELE_NUM; i++){
         eles[i]->setController(ctl);
     }
 
-//=======
-
-    //controller *ctl = new controller(nullptr, eles, FLOOR_NUM, 1);//controller对象指针
     for (int i = 0; i < ELE_NUM; ++i) {
-        eles[i]->setController(ctl);//每一个
+        eles[i]->setController(ctl);
     }
-//>>>>>>> aada321a86020219011f2fac714c27de79028ecb
+
     ctl->move(100,100);
     ctl->show();
     a_controller = ctl;
 
 	ui->pushButton_run->setEnabled(false);
 	ui->pushButton_stop->setEnabled(true);
-
-
-
 }
 
 void MainWindow::my_stop(){

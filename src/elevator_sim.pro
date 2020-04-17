@@ -47,10 +47,12 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
-RC_ICONS = "../img/icon.ico"
+
 
 QMAKE_CXXFLAGS_RELEASE += -g
 
 QMAKE_CFLAGS_RELEASE += -g
 
 QMAKE_LFLAGS_RELEASE = -mthreads -Wl
+
+

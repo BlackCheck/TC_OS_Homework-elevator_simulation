@@ -28,15 +28,16 @@ class elevator : public QWidget{
 	public:
 		int no = 0; // This elevator's id.
         int door = 0; // The status of door ∈ [0: closed, 1: opened].
-        int status = 0; //  The status of this elevator ∈ [0: pause暂停,1: up, 2: down,3: stop停用,4: broken,5:reset].
+        int status = 0; //  The status of this elevator ∈ [0: pause暂停,1: up, 2: down,3: stop停用,4: broken,5:disaster].
         int currentFloor = 0;//floor
         int trueCurrentFloor = 0; // true floor number
         int FLOOR_NUM = 20;//无用
         int flag = 0;
+        int flag_1 = 0;
 
 		const int ELEVATOR_TIMER_TICK = 800; // Frequency, unit: ms;
 
-        QString statusStr[6] = {"P", "↑", "↓","Stop","Broken","Reset"};
+        QString statusStr[6] = {"P", "↑", "↓","Stop","Broken","Disaster"};
 		QString doorStr[4]   = {"Closed", "Opened", "Closing", "Opening"};
 
 		std::vector<int> dests; // This elevator's destations <- destsInsider + destsOutside.
@@ -47,7 +48,7 @@ class elevator : public QWidget{
 
 		controller *ctrl;
 	public:
-        void open_door(bool flag);
+        void open_door();
 		void renew_label();
 		void check_when_run();
 		void check_when_pause();
@@ -61,10 +62,6 @@ class elevator : public QWidget{
         void setController(controller *_ctrl);
         bool reset();
         void close_door();
-
-//	signals:
-//        void send_ele_no(int);
-
 
 };
 
